@@ -1,0 +1,27 @@
+{
+  "collectCoverageFrom": ["src/**/*.(js|ts)"],
+  "coverageThreshold": {
+    "global": {
+      "branches": 100,
+      "functions": 100,
+      "lines": 100,
+      "statements": 100
+    }
+  },
+  "globals": {
+    "ts-jest": {
+      "useESM": true
+    }
+  },
+  "moduleNameMapper": {
+    "^(\\.{1,2}/.*)\\.js$": "$1"
+  },
+  "modulePaths": [
+    "src",
+    "/node_modules/"
+  ],
+  "preset": "ts-jest/presets/default-esm",
+  "roots": ["__tests__/unit"],
+  "testEnvironment": "node",
+  "testTimeout": 30000
+}

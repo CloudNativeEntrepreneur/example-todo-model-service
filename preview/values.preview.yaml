@@ -1,0 +1,7 @@
+knativeDeploy: true
+
+runIntegrationTests: true
+vaultRole: jx-vault
+
+env:
+  ENABLE_SYNC_SEND_TO_DENORMALIZER: "false"

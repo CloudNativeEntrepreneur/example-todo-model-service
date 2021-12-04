@@ -1,0 +1,7 @@
+{
+  "extends": ["config:base"],
+  "labels": ["ok-to-test", "approved"],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
+  "rebaseWhen": "behind-base-branch"
+}

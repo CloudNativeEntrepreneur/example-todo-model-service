@@ -1,0 +1,17 @@
+apiVersion: eventing.knative.dev/v1
+kind: Broker
+metadata:
+  name: todo-commands
+  annotations:
+      eventing.knative.dev/broker.class: MTChannelBasedBroker
+spec:
+  delivery:
+    deadLetterSink:
+      ref:
+        apiVersion: serving.knative.dev/v1
+        kind: Service
+        name: cne-dead-letter
+      uri: /cloudevent/dead-letter
+    retry: 5
+    backoffPolicy: exponential
+    backoffDelay: PT1S

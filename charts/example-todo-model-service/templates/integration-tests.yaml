@@ -1,0 +1,68 @@
+{{- if .Values.runIntegrationTests }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+{{- if .Values.service.name }}
+  name: {{ .Values.service.name }}-integration-tests-{{ lower .Values.image.tag }}
+{{- else }}
+  name: {{ template "fullname" . }}-integration-tests-{{ lower .Values.image.tag }}
+{{- end }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: {{ .Values.service.name }}-integration-tests
+      initContainers:
+      - name: wait-for-resources
+        image: bitnami/kubectl:1.19
+        command: [
+          'sh',
+          '-c',
+          "kubectl wait --for=condition=ready pod --selector=cluster-name={{ .Values.sourced.psql.name }} --timeout=600s -n {{ .Release.Namespace }}; REVISION=`kubectl get revisions -n {{ .Release.Namespace }} | grep example-hasura-readmodel-0 | tail -1 | awk '$1 {print$1}-deployment'`; kubectl rollout status -n {{ .Release.Namespace }} deployment $REVISION-deployment"
+        ]
+      - name: wait-for-new-revision
+        image: bitnami/kubectl:1.19
+        command: ['sh', '-c', "REVISION=`kubectl get revisions -n {{ .Release.Namespace }} | tail -1 | awk '$1 {print$1}-deployment'`; kubectl rollout status -n {{ .Release.Namespace }} deployment $REVISION-deployment"]
+      containers:
+      - name: integration-tests
+        image: "{{ .Values.image.repository }}-integration-tests:{{ .Values.image.tag }}"
+        env:
+        - name: POSTGRES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: sourced.{{ .Values.sourced.psql.name }}.credentials.postgresql.acid.zalan.do
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sourced.{{ .Values.sourced.psql.name }}.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: POSTGRES_DATABASE
+          value: sourced
+        - name: POSTGRES_HOST
+          value: {{ .Values.sourced.psql.hostname }}.{{ .Release.Namespace }}.svc.cluster.local
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: SOURCED_POSTGRESQL_URL
+          value: postgres://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DATABASE)
+        - name: TODO_COMMANDS_BROKER_URL
+          value: http://broker-ingress.knative-eventing.svc.cluster.local/{{ .Release.Namespace }}/todo-commands
+        - name: TODO_MODEL_URL
+          value: http://example-todo-model-service.{{ .Release.Namespace }}.svc.cluster.local
+{{- range $pkey, $pval := .Values.env }}
+        - name: {{ $pkey }}
+          value: {{ quote $pval }}
+{{- end }}
+        - name: SOURCED_SCHEMA_SYNC
+          value: "false"
+        - name: ENABLE_SYNC_SEND_TO_DENORMALIZER
+          value: "true"
+        - name: ENABLE_EVENT_PUBLISHING
+          value: "true"
+      restartPolicy: Never
+  backoffLimit: 0
+{{- end }}
