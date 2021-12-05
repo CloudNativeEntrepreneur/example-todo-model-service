@@ -217,7 +217,7 @@ describe("onSuccessSync - publishing enabled", () => {
 
     const fakeResult = {
       id: uuidv4(),
-      completedDenormalizers: ["example-hasura-readmodel"],
+      completedDenormalizers: ["example-hasura"],
     };
 
     await onSuccessSync({
@@ -262,7 +262,7 @@ describe("onSuccessSync - publishing enabled", () => {
 
     const fakeResult = {
       id: uuidv4(),
-      completedDenormalizers: ["example-hasura-readmodel"],
+      completedDenormalizers: ["example-hasura"],
     };
 
     await onSuccessSync({
@@ -302,7 +302,7 @@ describe("onSuccessAsync - publishing enabled", () => {
 
     const fakeResult = {
       id: uuidv4(),
-      completedDenormalizers: ["example-hasura-readmodel"],
+      completedDenormalizers: ["example-hasura"],
     };
 
     await onSuccessAsync({
@@ -342,7 +342,7 @@ describe("onSuccessAsync - publishing disabled", () => {
 
     const fakeResult = {
       id: uuidv4(),
-      completedDenormalizers: ["example-hasura-readmodel"],
+      completedDenormalizers: ["example-hasura"],
     };
 
     await onSuccessAsync({
@@ -378,7 +378,7 @@ describe("onSuccess", () => {
 
     const fakeResult = {
       id: uuidv4(),
-      completedDenormalizers: ["example-hasura-readmodel"],
+      completedDenormalizers: ["example-hasura"],
     };
 
     await onSuccess({

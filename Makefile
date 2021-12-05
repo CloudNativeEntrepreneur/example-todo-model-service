@@ -2,7 +2,7 @@ LOCAL_DEV_CLUSTER ?= kind-cne-local-dev
 NOW := $(shell date +%m_%d_%Y_%H_%M)
 SERVICE_NAME := example-todo-model-service
 
-onboard: refresh-kind-image
+onboard: install dev
 
 connect-to-local-dev-cluster:
 	kubectl ctx $(LOCAL_DEV_CLUSTER)
@@ -40,3 +40,9 @@ localizer:
 
 stop-localizer:
 	localizer expose default/$(SERVICE_NAME) --stop
+
+install:
+	npm ci
+
+dev:
+	npm run dev

@@ -22,11 +22,11 @@ export const handle = async (
   const address = session && session["x-hasura-user-id"];
 
   if (!address) {
-    return response.status(401).send("Unauthorized");
+    return response.status(401).json({ message: "Unauthorized" });
   }
 
   const sync = !!handlerOptions.sync;
-  const enableEventPublishing = !!handlerOptions.sync;
+  const enableEventPublishing = !!handlerOptions.enableEventPublishing;
 
   const id = uuid();
   const createdAt = new Date();
@@ -169,7 +169,7 @@ export const onSuccessSync =
         await bus.publish(
           domainEvent,
           Object.assign({}, initializedTodo, {
-            completedDenormalizers: ["example-hasura-readmodel"],
+            completedDenormalizers: ["example-hasura"],
           })
         );
 

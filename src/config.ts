@@ -12,12 +12,11 @@ export const config = {
 
   denormalizers: {
     "example-hasura-readmodel":
-      process.env.CNE_HASURA_DENORMALIZER_URL ||
-      "http://example-hasura-readmodel-denormalizer.default.svc.cluster.local",
+      process.env.CNE_HASURA_DENORMALIZER_URL || "http://localhost:5010",
   },
 
   enableSyncSendToDenormalizer:
-    process.env.ENABLE_SYNC_SEND_TO_DENORMALIZER === "true",
+    process.env.ENABLE_SYNC_SEND_TO_DENORMALIZER === "false" ? false : true,
 
   enableEventPublishing: process.env.ENABLE_EVENT_PUBLISHING === "true",
 

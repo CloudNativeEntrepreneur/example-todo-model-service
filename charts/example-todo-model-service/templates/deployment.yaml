@@ -39,7 +39,7 @@ spec:
           value: {{ quote $pval }}
 {{- end }}
         - name: DEBUG
-          value: register-server*,knativebus*,model-service
+          value: example*
         ports:
         - containerPort: 5002
         livenessProbe:

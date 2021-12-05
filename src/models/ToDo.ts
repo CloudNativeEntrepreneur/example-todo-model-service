@@ -15,7 +15,7 @@ export class ToDo extends Entity {
 
   initialize(options: {
     address: string;
-    createdAt: Date;
+    createdAt: Date | undefined;
     id: string;
     todo: string;
   }): void {
@@ -23,8 +23,11 @@ export class ToDo extends Entity {
     this.id = id;
     this.address = address;
     this.todo = todo;
-    this.createdAt = createdAt;
+    this.createdAt = createdAt || new Date();
     this.completed = false;
+
+    options.createdAt = this.createdAt;
+
     this.digest("initialize", options);
     this.enqueue("initialized", this.state());
   }
