@@ -18,11 +18,18 @@ describe("ToDo", () => {
 
   it("big test with most methods", () => {
     const todoInstance = new ToDo();
+    const todoInstance2 = new ToDo();
     const todoToCreate = {
       id: "todo-id-test",
       address: "0x000000test0000000",
       todo: "The only task that matters",
       createdAt: new Date(),
+    };
+
+    const todoToCreate2 = {
+      id: "todo-id-test-2",
+      address: "0x000000test0000000",
+      todo: "The only other task that matters",
     };
 
     todoInstance.initialize(todoToCreate);
@@ -33,9 +40,14 @@ describe("ToDo", () => {
     expect(todoInstance.completed).toBe(false);
     expect(todoInstance.completedAt).toBe(undefined);
 
-    const completedAt = new Date();
-    todoInstance.complete({ completedAt });
+    todoInstance.complete();
     expect(todoInstance.completed).toBe(true);
-    expect(todoInstance.completedAt).toBe(completedAt);
+    expect(todoInstance.completedAt).toBeDefined();
+
+    todoInstance2.initialize(todoToCreate2);
+    const completedAt = new Date();
+    todoInstance2.complete({ completedAt });
+    expect(todoInstance2.completed).toBe(true);
+    expect(todoInstance2.completedAt).toBe(completedAt);
   });
 });

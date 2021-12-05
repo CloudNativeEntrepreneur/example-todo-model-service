@@ -59,8 +59,8 @@ releases:
     - '{{ requiredEnv "PREVIEW_NAMESPACE" }}'
     - istio-injection=enabled
     - --overwrite=true
-# - chart: cne/example-hasura-readmodel-denormalizer
-#   name: example-hasura-readmodel-denormalizer
+# - chart: cne/example-hasura-denormalizer
+#   name: example-hasura-denormalizer
 #   version: 0.0.1
 #   wait: true
 #   namespace: '{{ requiredEnv "PREVIEW_NAMESPACE" }}'

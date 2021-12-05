@@ -11,7 +11,7 @@ export const config = {
   },
 
   denormalizers: {
-    "example-hasura-readmodel":
+    "example-hasura":
       process.env.CNE_HASURA_DENORMALIZER_URL || "http://localhost:5010",
   },
 

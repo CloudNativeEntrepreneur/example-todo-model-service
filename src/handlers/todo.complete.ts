@@ -8,7 +8,7 @@ import { v4 as uuid } from "uuid";
 const bus = knativebus(config.bus);
 
 export const where = (message): boolean =>
-  !!(message && message.data && message.data.todo);
+  !!(message && message.data && message.data.id);
 
 export const handle = async (
   request,
@@ -19,7 +19,7 @@ export const handle = async (
   const sync = !!handlerOptions.sync;
   const enableEventPublishing = !!handlerOptions.enableEventPublishing;
   const { data } = command;
-  const { todo } = data;
+  const { id } = data;
   const session = request?.body?.session_variables;
   const address = session && session["x-hasura-user-id"];
 
@@ -27,27 +27,27 @@ export const handle = async (
     return response.status(401).json({ message: "Unauthorized" });
   }
 
-  const id = uuid();
-  const createdAt = new Date();
-
   request.log.info({
-    msg: "⏳ handling todo.initialize",
+    msg: "⏳ handling todo.complete",
     id,
   });
 
-  const todoInstance = new ToDo();
+  let todoInstance;
+
+  try {
+    todoInstance = await todoRepository.get(id);
+  } catch (err) {
+    return response
+      .status(500)
+      .json({ message: `Cannot find ToDo with id ${id}` });
+  }
 
   todoInstance.on(
-    "initialized",
+    "completed",
     await onSuccess({ request, response, bus, sync, enableEventPublishing })
   );
 
-  todoInstance.initialize({
-    address,
-    id,
-    todo,
-    createdAt,
-  });
+  todoInstance.complete();
 
   try {
     await todoRepository.commit(todoInstance);
@@ -93,31 +93,31 @@ export const onSuccessAsync =
     bus: any;
     enableEventPublishing: boolean;
   }) =>
-  async (initializedTodo): Promise<void> => {
+  async (completedTodo): Promise<void> => {
     const { request, response, bus, enableEventPublishing } = options;
     request.log.info({
       msg: "✅ success - starting onSuccessAsync",
-      initializedTodo,
+      completedTodo,
     });
-    const domainEvent = "todo.initialized";
+    const domainEvent = "todo.completed";
 
     if (enableEventPublishing) {
-      await bus.publish(domainEvent, initializedTodo);
+      await bus.publish(domainEvent, completedTodo);
       request.log.info({
         msg: "✅ Event published",
         domainEvent,
-        id: initializedTodo.id,
-        address: initializedTodo.address,
+        id: completedTodo.id,
+        address: completedTodo.address,
       });
     }
 
     // Respond to Sender
     return response.status(201).json({
-      id: initializedTodo.id,
-      address: initializedTodo.address,
-      completed: initializedTodo.completed,
-      createdAt: initializedTodo.createdAt,
-      todo: initializedTodo.todo,
+      id: completedTodo.id,
+      address: completedTodo.address,
+      completed: completedTodo.completed,
+      createdAt: completedTodo.createdAt,
+      todo: completedTodo.todo,
     });
   };
 
@@ -130,26 +130,23 @@ export const onSuccessSync =
     bus: any;
     enableEventPublishing: boolean;
   }) =>
-  async (initializedTodo): Promise<void> => {
+  async (completedTodo): Promise<void> => {
     const { request, response, bus, enableEventPublishing } = options;
     request.log.info({
       msg: "✅ success - starting onSuccessSync",
-      id: initializedTodo.id,
-      address: initializedTodo.address,
+      id: completedTodo.id,
+      address: completedTodo.address,
     });
-    const domainEvent = "todo.initialized";
+    const domainEvent = "todo.completed";
 
     // Sync send event to denormalizer
     request.log.info({
       msg: "⏳ sending to denormalizer",
       domainEvent,
-      id: initializedTodo.id,
-      address: initializedTodo.address,
+      id: completedTodo.id,
+      address: completedTodo.address,
     });
-    const { data } = await syncSendToDenormalizers(
-      domainEvent,
-      initializedTodo
-    );
+    const { data } = await syncSendToDenormalizers(domainEvent, completedTodo);
     const denormalizerResult = data.data;
     const denormalizerErrors = data.errors;
 
@@ -164,7 +161,7 @@ export const onSuccessSync =
       if (enableEventPublishing) {
         await bus.publish(
           domainEvent,
-          Object.assign({}, initializedTodo, {
+          Object.assign({}, completedTodo, {
             completedDenormalizers: ["example-hasura"],
           })
         );
@@ -172,14 +169,14 @@ export const onSuccessSync =
         request.log.info({
           msg: "✅ Event published",
           domainEvent,
-          id: initializedTodo.id,
-          address: initializedTodo.address,
+          id: completedTodo.id,
+          address: completedTodo.address,
         });
       }
 
       // Respond to Hasura
       return response
         .status(201)
-        .json({ ...denormalizerResult.insert_todos_one });
+        .json({ ...denormalizerResult.update_todos_by_pk });
     }
   };

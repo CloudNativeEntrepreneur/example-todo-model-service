@@ -15,24 +15,24 @@ export class ToDo extends Entity {
 
   initialize(options: {
     address: string;
-    createdAt: Date | undefined;
+    createdAt?: Date;
     id: string;
     todo: string;
   }): void {
+    options.createdAt = options.createdAt || new Date();
     const { address, createdAt, id, todo } = options;
     this.id = id;
     this.address = address;
     this.todo = todo;
-    this.createdAt = createdAt || new Date();
+    this.createdAt = createdAt;
     this.completed = false;
-
-    options.createdAt = this.createdAt;
 
     this.digest("initialize", options);
     this.enqueue("initialized", this.state());
   }
 
-  complete(options: { completedAt: Date }) {
+  complete(options: { completedAt?: Date } = {}) {
+    options.completedAt = options.completedAt || new Date();
     const { completedAt } = options;
     this.completed = true;
     this.completedAt = completedAt;

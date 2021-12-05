@@ -98,7 +98,7 @@ describe("todo model integration tests", () => {
 
   it("should get 201 when calling todo.initialize with auth session info", async () => {
     info("sending command todo.initialize");
-    const response = await send(
+    const initializeTodoResponse = await send(
       "todo.initialize",
       {
         todo: "integration tests",
@@ -108,6 +108,21 @@ describe("todo model integration tests", () => {
       }
     );
 
-    expect(response.status).toBe(201);
+    expect(initializeTodoResponse.status).toBe(201);
+    expect(initializeTodoResponse.data.id).toBeDefined();
+    expect(initializeTodoResponse.data.todo).toBe("integration tests");
+
+    info("sending command todo.complete");
+    const completeTodoResponse = await send(
+      "todo.complete",
+      {
+        id: initializeTodoResponse.data.id,
+      },
+      {
+        "x-hasura-user-id": "0x0TestUser1",
+      }
+    );
+
+    expect(completeTodoResponse.status).toBe(201);
   });
 });
