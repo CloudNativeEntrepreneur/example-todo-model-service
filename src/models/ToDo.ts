@@ -5,8 +5,6 @@ export class ToDo extends Entity {
   address: string | undefined;
   todo: string | undefined;
   completed: boolean | undefined;
-  completedAt: Date | undefined;
-  createdAt: Date | undefined;
   removed: boolean | undefined;
 
   constructor(snapshot?: any, events?: any) {
@@ -14,36 +12,25 @@ export class ToDo extends Entity {
     this.rehydrate(snapshot, events);
   }
 
-  initialize(options: {
-    address: string;
-    createdAt?: Date;
-    id: string;
-    todo: string;
-  }): void {
-    options.createdAt = options.createdAt || new Date();
-    const { address, createdAt, id, todo } = options;
+  initialize(options: { address: string; id: string; todo: string }): void {
+    const { address, id, todo } = options;
     this.id = id;
     this.address = address;
     this.todo = todo;
-    this.createdAt = createdAt;
     this.completed = false;
 
     this.digest("initialize", options);
     this.enqueue("initialized", this.state());
   }
 
-  complete(options: { completedAt?: Date } = {}) {
-    options.completedAt = options.completedAt || new Date();
-    const { completedAt } = options;
+  complete() {
     this.completed = true;
-    this.completedAt = completedAt;
-    this.digest("complete", options);
+    this.digest("complete", {});
     this.enqueue("completed", this.state());
   }
 
   reopen() {
     this.completed = false;
-    this.completedAt = undefined;
     this.digest("reopen", {});
     this.enqueue("reopened", this.state());
   }

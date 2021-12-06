@@ -123,10 +123,6 @@ export const onSuccessAsync =
     // Respond to Sender
     return response.status(201).json({
       id: removedTodo.id,
-      address: removedTodo.address,
-      removed: removedTodo.removed,
-      createdAt: removedTodo.createdAt,
-      todo: removedTodo.todo,
     });
   };
 
@@ -186,6 +182,6 @@ export const onSuccessSync =
       // Respond to Hasura
       return response
         .status(201)
-        .json({ ...denormalizerResult.update_todos_by_pk });
+        .json({ ...denormalizerResult.delete_todos_by_pk });
     }
   };

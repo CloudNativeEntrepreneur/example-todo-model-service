@@ -179,7 +179,6 @@ describe("where", () => {
       data: {
         id: "test",
         address: "0x0000test0000",
-        createdAt: new Date(),
         todo: "where filters",
       },
     });

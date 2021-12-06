@@ -125,7 +125,6 @@ export const onSuccessAsync =
       id: completedTodo.id,
       address: completedTodo.address,
       completed: completedTodo.completed,
-      createdAt: completedTodo.createdAt,
       todo: completedTodo.todo,
     });
   };

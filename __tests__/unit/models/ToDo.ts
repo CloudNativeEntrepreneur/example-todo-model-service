@@ -23,7 +23,6 @@ describe("ToDo", () => {
       id: "todo-id-test",
       address: "0x000000test0000000",
       todo: "The only task that matters",
-      createdAt: new Date(),
     };
 
     const todoToCreate2 = {
@@ -36,23 +35,17 @@ describe("ToDo", () => {
     expect(todoInstance.id).toBe(todoToCreate.id);
     expect(todoInstance.address).toBe(todoToCreate.address);
     expect(todoInstance.todo).toBe(todoToCreate.todo);
-    expect(todoInstance.createdAt).toBe(todoToCreate.createdAt);
     expect(todoInstance.completed).toBe(false);
-    expect(todoInstance.completedAt).toBe(undefined);
 
     todoInstance.complete();
     expect(todoInstance.completed).toBe(true);
-    expect(todoInstance.completedAt).toBeDefined();
 
     todoInstance2.initialize(todoToCreate2);
-    const completedAt = new Date();
-    todoInstance2.complete({ completedAt });
+    todoInstance2.complete();
     expect(todoInstance2.completed).toBe(true);
-    expect(todoInstance2.completedAt).toBe(completedAt);
 
     todoInstance.reopen();
     expect(todoInstance.completed).toBe(false);
-    expect(todoInstance.completedAt).toBe(undefined);
 
     todoInstance.remove();
     expect(todoInstance.removed).toBe(true);

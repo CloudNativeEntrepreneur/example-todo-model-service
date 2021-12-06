@@ -125,7 +125,6 @@ export const onSuccessAsync =
       id: reopenedTodo.id,
       address: reopenedTodo.address,
       reopened: reopenedTodo.reopened,
-      createdAt: reopenedTodo.createdAt,
       todo: reopenedTodo.todo,
     });
   };

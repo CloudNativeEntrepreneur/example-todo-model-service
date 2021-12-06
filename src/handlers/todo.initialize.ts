@@ -28,7 +28,6 @@ export const handle = async (
   }
 
   const id = uuid();
-  const createdAt = new Date();
 
   request.log.info({
     msg: "⏳ handling todo.initialize",
@@ -46,7 +45,6 @@ export const handle = async (
     address,
     id,
     todo,
-    createdAt,
   });
 
   try {
@@ -116,7 +114,6 @@ export const onSuccessAsync =
       id: initializedTodo.id,
       address: initializedTodo.address,
       completed: initializedTodo.completed,
-      createdAt: initializedTodo.createdAt,
       todo: initializedTodo.todo,
     });
   };
