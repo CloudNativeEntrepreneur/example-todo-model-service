@@ -49,5 +49,9 @@ describe("ToDo", () => {
     todoInstance2.complete({ completedAt });
     expect(todoInstance2.completed).toBe(true);
     expect(todoInstance2.completedAt).toBe(completedAt);
+
+    todoInstance.reopen();
+    expect(todoInstance.completed).toBe(false);
+    expect(todoInstance.completedAt).toBe(undefined);
   });
 });

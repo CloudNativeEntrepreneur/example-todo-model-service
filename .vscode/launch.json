@@ -12,7 +12,8 @@
       "url": "https://localhost:5003",
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
-      "trace": true
+      "trace": true,
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }

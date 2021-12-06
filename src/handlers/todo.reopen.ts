@@ -26,7 +26,7 @@ export const handle = async (
   }
 
   request.log.info({
-    msg: "⏳ handling todo.complete",
+    msg: "⏳ handling todo.reopen",
     id,
   });
 
@@ -44,19 +44,19 @@ export const handle = async (
     return response.status(401).json({ message: "Unauthorized" });
   }
 
-  if (todoInstance.completed) {
+  if (!todoInstance.completed) {
     // TODO: check what best error code to use here is
     return response
       .status(500)
-      .json({ message: "Todo is already completed - cannot complete again" });
+      .json({ message: "Todo is not completed - cannot reopen" });
   }
 
   todoInstance.on(
-    "completed",
+    "reopened",
     await onSuccess({ request, response, bus, sync, enableEventPublishing })
   );
 
-  todoInstance.complete();
+  todoInstance.reopen();
 
   try {
     await todoRepository.commit(todoInstance);
@@ -102,36 +102,36 @@ export const onSuccessAsync =
     bus: any;
     enableEventPublishing: boolean;
   }) =>
-  async (completedTodo): Promise<void> => {
+  async (reopenedTodo): Promise<void> => {
     const { request, response, bus, enableEventPublishing } = options;
     request.log.info({
       msg: "✅ success - starting onSuccessAsync",
-      completedTodo,
+      reopenedTodo,
     });
-    const domainEvent = "todo.completed";
+    const domainEvent = "todo.reopened";
 
     if (enableEventPublishing) {
-      await bus.publish(domainEvent, completedTodo);
+      await bus.publish(domainEvent, reopenedTodo);
       request.log.info({
         msg: "✅ Event published",
         domainEvent,
-        id: completedTodo.id,
-        address: completedTodo.address,
+        id: reopenedTodo.id,
+        address: reopenedTodo.address,
       });
     }
 
     // Respond to Sender
     return response.status(201).json({
-      id: completedTodo.id,
-      address: completedTodo.address,
-      completed: completedTodo.completed,
-      createdAt: completedTodo.createdAt,
-      todo: completedTodo.todo,
+      id: reopenedTodo.id,
+      address: reopenedTodo.address,
+      reopened: reopenedTodo.reopened,
+      createdAt: reopenedTodo.createdAt,
+      todo: reopenedTodo.todo,
     });
   };
 
 // Send to denormalizer, and pass on it's response as this response
-// also, publish events, fire and forget, if enabled, noting that denormalize was already completed
+// also, publish events, fire and forget, if enabled, noting that denormalize was already reopened
 export const onSuccessSync =
   (options: {
     request: any;
@@ -139,23 +139,23 @@ export const onSuccessSync =
     bus: any;
     enableEventPublishing: boolean;
   }) =>
-  async (completedTodo): Promise<void> => {
+  async (reopenedTodo): Promise<void> => {
     const { request, response, bus, enableEventPublishing } = options;
     request.log.info({
       msg: "✅ success - starting onSuccessSync",
-      id: completedTodo.id,
-      address: completedTodo.address,
+      id: reopenedTodo.id,
+      address: reopenedTodo.address,
     });
-    const domainEvent = "todo.completed";
+    const domainEvent = "todo.reopened";
 
     // Sync send event to denormalizer
     request.log.info({
       msg: "⏳ sending to denormalizer",
       domainEvent,
-      id: completedTodo.id,
-      address: completedTodo.address,
+      id: reopenedTodo.id,
+      address: reopenedTodo.address,
     });
-    const { data } = await syncSendToDenormalizers(domainEvent, completedTodo);
+    const { data } = await syncSendToDenormalizers(domainEvent, reopenedTodo);
     const denormalizerResult = data.data;
     const denormalizerErrors = data.errors;
 
@@ -170,16 +170,16 @@ export const onSuccessSync =
       if (enableEventPublishing) {
         await bus.publish(
           domainEvent,
-          Object.assign({}, completedTodo, {
-            completedDenormalizers: ["example-hasura"],
+          Object.assign({}, reopenedTodo, {
+            reopenedDenormalizers: ["example-hasura"],
           })
         );
 
         request.log.info({
           msg: "✅ Event published",
           domainEvent,
-          id: completedTodo.id,
-          address: completedTodo.address,
+          id: reopenedTodo.id,
+          address: reopenedTodo.address,
         });
       }
 

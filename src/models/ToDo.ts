@@ -39,4 +39,11 @@ export class ToDo extends Entity {
     this.digest("complete", options);
     this.enqueue("completed", this.state());
   }
+
+  reopen() {
+    this.completed = false;
+    this.completedAt = undefined;
+    this.digest("reopen", {});
+    this.enqueue("reopened", this.state());
+  }
 }
