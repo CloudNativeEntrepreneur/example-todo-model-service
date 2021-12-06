@@ -34,11 +34,11 @@ export const start = async (server, handlersPath: string) => {
     url: sourced.psql.url,
     schema: sourced.psql.schema,
     synchronize: sourced.psql.synchronize,
-    extra: {
-      ssl: {
-        rejectUnauthorized: sourced.psql.ssl.rejectUnauthorized,
-      },
-    },
+    // extra: {
+    //   ssl: {
+    //     rejectUnauthorized: sourced.psql.ssl.rejectUnauthorized,
+    //   },
+    // },
   };
   logger.info({
     msg: "⏳ connecting to psql",

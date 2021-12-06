@@ -1,6 +1,7 @@
 LOCAL_DEV_CLUSTER ?= kind-cne-local-dev
 NOW := $(shell date +%m_%d_%Y_%H_%M)
 SERVICE_NAME := example-todo-model-service
+DEBUG ?= example*
 
 onboard: install dev
 
@@ -45,4 +46,4 @@ install:
 	npm ci
 
 dev:
-	npm run dev
+	DEBUG=$(DEBUG) ./scripts/run-using-local-dev-cluster-db.sh
