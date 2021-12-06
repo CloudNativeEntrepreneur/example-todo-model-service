@@ -53,5 +53,8 @@ describe("ToDo", () => {
     todoInstance.reopen();
     expect(todoInstance.completed).toBe(false);
     expect(todoInstance.completedAt).toBe(undefined);
+
+    todoInstance.remove();
+    expect(todoInstance.removed).toBe(true);
   });
 });

@@ -7,6 +7,7 @@ export class ToDo extends Entity {
   completed: boolean | undefined;
   completedAt: Date | undefined;
   createdAt: Date | undefined;
+  removed: boolean | undefined;
 
   constructor(snapshot?: any, events?: any) {
     super();
@@ -45,5 +46,11 @@ export class ToDo extends Entity {
     this.completedAt = undefined;
     this.digest("reopen", {});
     this.enqueue("reopened", this.state());
+  }
+
+  remove() {
+    this.removed = true;
+    this.digest("removed", {});
+    this.enqueue("removed", this.state());
   }
 }
