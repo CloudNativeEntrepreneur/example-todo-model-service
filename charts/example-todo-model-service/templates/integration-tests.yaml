@@ -1,3 +1,5 @@
+{{- if .Values.knative.eventing.local }}
+{{- else }}
 {{- if .Values.runIntegrationTests }}
 apiVersion: batch/v1
 kind: Job
@@ -65,4 +67,5 @@ spec:
           value: "true"
       restartPolicy: Never
   backoffLimit: 0
+{{- end }}
 {{- end }}

@@ -1,3 +1,5 @@
+{{- if .Values.knative.eventing.local }}
+{{- else }}
 {{- if .Values.knativeDeploy }}
 {{- else }}
 apiVersion: apps/v1
@@ -57,4 +59,5 @@ spec:
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
           timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+{{- end }}
 {{- end }}

@@ -24,6 +24,10 @@ knative:
   minScale: 1
   maxScale: 1
   concurrencyTarget: 100
+  eventing:
+    local:
+    subscriber:
+    dlqSubscriber:
 
 # HorizontalPodAutoscaler
 hpa:

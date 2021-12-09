@@ -7,11 +7,15 @@ metadata:
 spec:
   delivery:
     deadLetterSink:
+{{- if .Values.knative.eventing.local }}
+      uri: {{ .Values.knative.eventing.dlqSubscriber }}/cloudevent/dead-letter
+{{- else }}
       ref:
         apiVersion: serving.knative.dev/v1
         kind: Service
         name: cne-dead-letter
       uri: /cloudevent/dead-letter
+{{- end }}
     retry: 5
     backoffPolicy: exponential
     backoffDelay: PT1S

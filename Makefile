@@ -1,9 +1,18 @@
-LOCAL_DEV_CLUSTER ?= kind-cne-local-dev
+LOCAL_DEV_CLUSTER ?= kind-local-dev-cluster
 NOW := $(shell date +%m_%d_%Y_%H_%M)
 SERVICE_NAME := example-todo-model-service
 DEBUG ?= example*
 
-onboard: install dev
+onboard: deploy-to-local-cluster install
+
+install:
+	npm ci
+
+dev:
+	DEBUG=$(DEBUG) ./scripts/run-using-local-dev-cluster-db.sh
+
+open:
+	code .
 
 connect-to-local-dev-cluster:
 	kubectl ctx $(LOCAL_DEV_CLUSTER)
@@ -17,13 +26,13 @@ build-new-local-image:
 
 load-local-image-to-kind:
 	kubectl ctx $(LOCAL_DEV_CLUSTER)
-	kind --name cne-local-dev load docker-image dev.local/$(SERVICE_NAME):$(NOW)
+	kind --name local-dev-cluster load docker-image dev.local/$(SERVICE_NAME):$(NOW)
 
 deploy-to-local-cluster:
 	kubectl ctx $(LOCAL_DEV_CLUSTER)
 	helm template ./charts/$(SERVICE_NAME)/ \
 		-f ./charts/$(SERVICE_NAME)/values.yaml \
-		--set image.repository=dev.local/$(SERVICE_NAME),image.tag=$(NOW) \
+		--set image.repository=dev.local/$(SERVICE_NAME),image.tag=$(NOW),knative.eventing.local=true,knative.eventing.subscriber=http://host.docker.internal:5002,knative.eventing.dlqSubscriber=http://host.docker.internal:3999 \
 		| kubectl apply -f -
 
 delete-local-deployment:
@@ -41,9 +50,3 @@ localizer:
 
 stop-localizer:
 	localizer expose default/$(SERVICE_NAME) --stop
-
-install:
-	npm ci
-
-dev:
-	DEBUG=$(DEBUG) ./scripts/run-using-local-dev-cluster-db.sh

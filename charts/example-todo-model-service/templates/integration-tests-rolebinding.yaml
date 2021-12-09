@@ -1,3 +1,5 @@
+{{- if .Values.knative.eventing.local }}
+{{- else }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -9,3 +11,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ .Values.service.name }}-integration-tests
+{{- end }}

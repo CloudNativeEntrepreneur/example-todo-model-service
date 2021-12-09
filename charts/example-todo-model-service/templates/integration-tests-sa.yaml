@@ -1,4 +1,7 @@
+{{- if .Values.knative.eventing.local }}
+{{- else }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ .Values.service.name }}-integration-tests
+{{- end }}
