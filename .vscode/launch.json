@@ -9,11 +9,12 @@
         "ts-node/esm"
       ],
       "program": "${workspaceFolder}/src/bin/start.ts",
-      "url": "https://localhost:5003",
+      "url": "https://localhost:5002",
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
       "trace": true,
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.local.env",
+      "outputCapture": "std",
     }
   ]
 }

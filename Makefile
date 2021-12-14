@@ -3,13 +3,16 @@ NOW := $(shell date +%m_%d_%Y_%H_%M)
 SERVICE_NAME := example-todo-model-service
 DEBUG ?= example*
 
-onboard: deploy-to-local-cluster install
+onboard: install create-env-file deploy-to-local-cluster
+
+create-env-file:
+	./scripts/create-env-file.sh
+
+dev:
+	DEBUG=$(DEBUG) npm run dev
 
 install:
 	npm ci
-
-dev:
-	DEBUG=$(DEBUG) ./scripts/run-using-local-dev-cluster-db.sh
 
 open:
 	code .

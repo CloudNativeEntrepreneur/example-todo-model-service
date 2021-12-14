@@ -25,30 +25,49 @@ export const handle = async (
     return response.status(401).json({ message: "Unauthorized" });
   }
 
+  let todoInstance;
   request.log.info({
     msg: "⏳ handling todo.complete",
     id,
+    address,
   });
-
-  let todoInstance;
 
   try {
     todoInstance = await todoRepository.get(id);
   } catch (err) {
-    return response
-      .status(500)
-      .json({ message: `Cannot find ToDo with id ${id}` });
+    const msg = `Cannot find ToDo with id ${id}`;
+    request.log.info({ msg: `🚨 ${msg}: ${err}` });
+    return response.status(500).json({ msg });
   }
 
+  if (!todoInstance) {
+    const msg = `🚨 Todo ${id} not found`;
+    request.log.info({ msg });
+    return response.status(404).json({ msg });
+  }
+
+  request.log.info({
+    msg: "⏳ found todo",
+    id,
+    address,
+    todoInstance,
+  });
+
   if (address !== todoInstance.address) {
+    request.log.info({
+      msg: `🚨 Can only change todos with address ${address}`,
+      id,
+      address,
+    });
+
     return response.status(401).json({ message: "Unauthorized" });
   }
 
   if (todoInstance.completed) {
     // TODO: check what best error code to use here is
-    return response
-      .status(500)
-      .json({ message: "Todo is already completed - cannot complete again" });
+    const msg = "🚨 Todo is already completed - cannot complete again";
+    request.log.error({ msg, id: todoInstance.id });
+    return response.status(500).json({ msg });
   }
 
   todoInstance.on(
@@ -121,12 +140,13 @@ export const onSuccessAsync =
     }
 
     // Respond to Sender
-    return response.status(201).json({
-      id: completedTodo.id,
-      address: completedTodo.address,
-      completed: completedTodo.completed,
-      todo: completedTodo.todo,
-    });
+    // return response.status(201).json({
+    //   id: completedTodo.id,
+    //   address: completedTodo.address,
+    //   completed: completedTodo.completed,
+    //   todo: completedTodo.todo,
+    // });
+    return response.status(202).send();
   };
 
 // Send to denormalizer, and pass on it's response as this response
@@ -154,7 +174,11 @@ export const onSuccessSync =
       id: completedTodo.id,
       address: completedTodo.address,
     });
-    const { data } = await syncSendToDenormalizers(domainEvent, completedTodo);
+    const syncSendResponse = await syncSendToDenormalizers(
+      domainEvent,
+      completedTodo
+    );
+    const { data } = syncSendResponse;
     const denormalizerResult = data.data;
     const denormalizerErrors = data.errors;
 
@@ -184,7 +208,7 @@ export const onSuccessSync =
 
       // Respond to Hasura
       return response
-        .status(201)
+        .status(syncSendResponse.status)
         .json({ ...denormalizerResult.update_todos_by_pk });
     }
   };
