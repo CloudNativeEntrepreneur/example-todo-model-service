@@ -31,6 +31,7 @@ jest.mock("axios", () => {
       () =>
         new Promise((resolve, reject) => {
           resolve({
+            status: 201,
             data: {
               data: {
                 insert_companies_one: {
@@ -195,7 +196,7 @@ describe("onSuccessSync - publishing enabled", () => {
     jest.clearAllMocks();
   });
 
-  it("should publish event and response to caller", async () => {
+  it("should publish event and respond to caller", async () => {
     const { knativebus } = await import("knativebus");
     const bus = knativebus();
 
@@ -311,7 +312,7 @@ describe("onSuccessAsync - publishing enabled", () => {
       enableEventPublishing: true,
     })(fakeResult);
     expect(bus.publish).toBeCalledWith("todo.initialized", fakeResult);
-    expect(response.status).toBeCalledWith(201);
+    expect(response.status).toBeCalledWith(202);
   });
 });
 
@@ -351,7 +352,7 @@ describe("onSuccessAsync - publishing disabled", () => {
       enableEventPublishing: false,
     })(fakeResult);
     expect(bus.publish).not.toBeCalled();
-    expect(response.status).toBeCalledWith(201);
+    expect(response.status).toBeCalledWith(202);
   });
 });
 
@@ -422,6 +423,6 @@ describe("onSuccess", () => {
       sync: false,
     })(fakeResult);
     expect(bus.publish).not.toBeCalled();
-    expect(response.status).toBeCalledWith(201);
+    expect(response.status).toBeCalledWith(202);
   });
 });
