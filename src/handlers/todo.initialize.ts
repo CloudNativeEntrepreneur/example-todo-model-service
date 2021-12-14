@@ -110,12 +110,13 @@ export const onSuccessAsync =
     }
 
     // Respond to Sender
-    return response.status(201).json({
-      id: initializedTodo.id,
-      address: initializedTodo.address,
-      completed: initializedTodo.completed,
-      todo: initializedTodo.todo,
-    });
+    // return response.status(202).json({
+    //   id: initializedTodo.id,
+    //   address: initializedTodo.address,
+    //   completed: initializedTodo.completed,
+    //   todo: initializedTodo.todo,
+    // });
+    return response.status(202).send();
   };
 
 // Send to denormalizer, and pass on it's response as this response
@@ -143,10 +144,11 @@ export const onSuccessSync =
       id: initializedTodo.id,
       address: initializedTodo.address,
     });
-    const { data } = await syncSendToDenormalizers(
+    const syncSendResponse = await syncSendToDenormalizers(
       domainEvent,
       initializedTodo
     );
+    const { data } = syncSendResponse;
     const denormalizerResult = data.data;
     const denormalizerErrors = data.errors;
 
@@ -176,7 +178,7 @@ export const onSuccessSync =
 
       // Respond to Hasura
       return response
-        .status(201)
+        .status(syncSendResponse.status)
         .json({ ...denormalizerResult.insert_todos_one });
     }
   };

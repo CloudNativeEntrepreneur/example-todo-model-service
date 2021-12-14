@@ -15,10 +15,13 @@ export const config = {
       process.env.CNE_HASURA_DENORMALIZER_URL || "http://localhost:5010",
   },
 
+  // enableSyncSendToDenormalizer: false,
   enableSyncSendToDenormalizer:
     process.env.ENABLE_SYNC_SEND_TO_DENORMALIZER === "false" ? false : true,
 
-  enableEventPublishing: process.env.ENABLE_EVENT_PUBLISHING === "true",
+  // enableEventPublishing: true,
+  enableEventPublishing:
+    process.env.ENABLE_EVENT_PUBLISHING === "false" ? false : true,
 
   handlerBasePath: process.env.HANDLER_BASE_PATH || "src",
 

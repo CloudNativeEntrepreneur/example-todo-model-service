@@ -40,6 +40,12 @@ export const handle = async (
       .json({ message: `Cannot find ToDo with id ${id}` });
   }
 
+  if (!todoInstance) {
+    const msg = `🚨 Todo ${id} not found`;
+    request.log.info({ msg });
+    return response.status(404).json({ msg });
+  }
+
   if (address !== todoInstance.address) {
     return response.status(401).json({ message: "Unauthorized" });
   }
@@ -121,12 +127,13 @@ export const onSuccessAsync =
     }
 
     // Respond to Sender
-    return response.status(201).json({
-      id: reopenedTodo.id,
-      address: reopenedTodo.address,
-      reopened: reopenedTodo.reopened,
-      todo: reopenedTodo.todo,
-    });
+    // return response.status(201).json({
+    //   id: reopenedTodo.id,
+    //   address: reopenedTodo.address,
+    //   reopened: reopenedTodo.reopened,
+    //   todo: reopenedTodo.todo,
+    // });
+    return response.status(202).send();
   };
 
 // Send to denormalizer, and pass on it's response as this response
@@ -154,7 +161,11 @@ export const onSuccessSync =
       id: reopenedTodo.id,
       address: reopenedTodo.address,
     });
-    const { data } = await syncSendToDenormalizers(domainEvent, reopenedTodo);
+    const syncSendResponse = await syncSendToDenormalizers(
+      domainEvent,
+      reopenedTodo
+    );
+    const { data } = syncSendResponse;
     const denormalizerResult = data.data;
     const denormalizerErrors = data.errors;
 
@@ -170,7 +181,7 @@ export const onSuccessSync =
         await bus.publish(
           domainEvent,
           Object.assign({}, reopenedTodo, {
-            reopenedDenormalizers: ["example-hasura"],
+            completedDenormalizers: ["example-hasura"],
           })
         );
 
@@ -184,7 +195,7 @@ export const onSuccessSync =
 
       // Respond to Hasura
       return response
-        .status(201)
+        .status(syncSendResponse.status)
         .json({ ...denormalizerResult.update_todos_by_pk });
     }
   };

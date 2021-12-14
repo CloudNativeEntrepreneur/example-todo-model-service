@@ -35,26 +35,29 @@ export const handle = async (
   try {
     todoInstance = await todoRepository.get(id);
   } catch (err) {
+    request.log.info("🚨 REPOSITORY ERROR", err);
     return response
       .status(500)
       .json({ message: `Cannot find ToDo with id ${id}` });
+  }
+  if (!todoInstance) {
+    const msg = `🚨 Todo ${id} not found`;
+    request.log.info({ msg });
+    return response.status(404).json({ msg });
   }
 
   if (address !== todoInstance.address) {
     return response.status(401).json({ message: "Unauthorized" });
   }
 
-  if (todoInstance.removed) {
-    // TODO: check what best error code to use here is
-    return response
-      .status(500)
-      .json({ message: "Todo is already removed - cannot remove again" });
-  }
-
   todoInstance.on(
     "removed",
     await onSuccess({ request, response, bus, sync, enableEventPublishing })
   );
+
+  if (todoInstance.removed) {
+    todoInstance.emit("removed", todoInstance.state());
+  }
 
   todoInstance.remove();
 
@@ -121,9 +124,10 @@ export const onSuccessAsync =
     }
 
     // Respond to Sender
-    return response.status(201).json({
-      id: removedTodo.id,
-    });
+    // return response.status(201).json({
+    //   id: removedTodo.id,
+    // });
+    return response.status(202).send();
   };
 
 // Send to denormalizer, and pass on it's response as this response
@@ -151,7 +155,11 @@ export const onSuccessSync =
       id: removedTodo.id,
       address: removedTodo.address,
     });
-    const { data } = await syncSendToDenormalizers(domainEvent, removedTodo);
+    const syncSendResponse = await syncSendToDenormalizers(
+      domainEvent,
+      removedTodo
+    );
+    const { data } = syncSendResponse;
     const denormalizerResult = data.data;
     const denormalizerErrors = data.errors;
 
@@ -167,7 +175,7 @@ export const onSuccessSync =
         await bus.publish(
           domainEvent,
           Object.assign({}, removedTodo, {
-            removedDenormalizers: ["example-hasura"],
+            completedDenormalizers: ["example-hasura"],
           })
         );
 
@@ -181,7 +189,7 @@ export const onSuccessSync =
 
       // Respond to Hasura
       return response
-        .status(201)
+        .status(syncSendResponse.status)
         .json({ ...denormalizerResult.delete_todos_by_pk });
     }
   };
