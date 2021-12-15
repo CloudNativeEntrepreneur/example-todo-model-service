@@ -30,7 +30,7 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@jest/globals": "27.4.2",
+    "@jest/globals": "27.4.4",
     "@types/debug": "4.1.7",
     "@types/jest": "27.0.3",
     "@types/node": "16.11.12",
@@ -42,7 +42,7 @@
     "eslint-plugin-prettier": "4.0.0",
     "faker": "5.5.3",
     "husky": "7.0.4",
-    "jest": "27.4.3",
+    "jest": "27.4.5",
     "lint-staged": "12.1.2",
     "nodemon": "2.0.15",
     "prettier": "2.5.1",
