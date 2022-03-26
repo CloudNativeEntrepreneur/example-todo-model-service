@@ -22,7 +22,7 @@
     "debug": "4.3.3",
     "express": "4.17.2",
     "express-pino-logger": "7.0.0",
-    "knativebus": "2.3.7",
+    "knativebus": "2.3.17",
     "pino": "7.6.1",
     "register-server-handlers": "4.2.0",
     "sourced": "4.0.4",
