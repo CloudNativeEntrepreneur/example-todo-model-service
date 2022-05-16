@@ -17,7 +17,7 @@
     "test": "DEBUG=tests,${DEBUG:-example*} jest --no-cache --config ./jest.json --coverage --verbose"
   },
   "dependencies": {
-    "axios": "0.24.0",
+    "axios": "0.27.2",
     "body-parser": "1.19.1",
     "debug": "4.3.3",
     "express": "4.17.2",
