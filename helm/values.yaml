@@ -10,7 +10,7 @@ podsLabels: {}
 deploymentLabels: {}
 
 image:
-  repository: ghcr.io/cloudnativeentrepreneur/example-todo-model
+  repository: ghcr.io/cloudnativeentrepreneur/example-todo-model-service
   tag: latest
   pullPolicy: IfNotPresent
 
