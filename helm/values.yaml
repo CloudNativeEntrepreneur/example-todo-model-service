@@ -10,8 +10,8 @@ podsLabels: {}
 deploymentLabels: {}
 
 image:
-  repository: draft
-  tag: dev
+  repository: ghcr.io/cloudnativeentrepreneur/example-todo-model
+  tag: latest
   pullPolicy: IfNotPresent
 
 # define environment variables here as a map of key: value
