@@ -91,8 +91,8 @@ readinessProbe:
 
 sourced:
   psql:
-    name: example-sourced-postgresql
-    hostname: example-sourced-postgresql
+    name: example-sourced-db-postgresql
+    hostname: example-sourced-db-postgresql
 # custom ingress annotations on this service
 ingress:
   annotations: {}
