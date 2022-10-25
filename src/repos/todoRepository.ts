@@ -1,6 +1,5 @@
 import { Repository } from "sourced-repo-typeorm";
 import { ToDo } from "../models/ToDo.js";
+import { QueuedRepo } from "sourced-queued-repo-promise";
 
-const repository = new Repository(ToDo);
-
-export const todoRepository = repository;
+export const repository = QueuedRepo(new Repository(ToDo));

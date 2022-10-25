@@ -1,4 +1,4 @@
-FROM node:17.2.0-alpine3.13 as build
+FROM node:17.3.0-alpine3.13 as build
 
 WORKDIR /build
 
@@ -12,7 +12,7 @@ COPY tsconfig.json ./
 RUN npm run build
 RUN npm prune --production
 
-FROM node:17.2.0-alpine3.13
+FROM node:17.3.0-alpine3.13
 
 WORKDIR /usr/src/app
 
@@ -21,7 +21,7 @@ COPY --from=build /build/dist/ dist/
 COPY --from=build /build/package.json /build/package-lock.json dist/
 
 ENV HANDLER_BASE_PATH=dist
-ENV PORT=5002
+ENV PORT=5011
 EXPOSE ${PORT}
 
 CMD node ./dist/bin/start.js

@@ -48,7 +48,7 @@ const get = async (path) => {
 };
 
 describe("todo model integration tests", () => {
-  // let todoRepository
+  // let repository
 
   beforeAll(async () => {
     info("connecting to psql");

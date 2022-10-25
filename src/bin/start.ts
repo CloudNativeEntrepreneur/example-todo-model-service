@@ -2,7 +2,6 @@ import path from "path";
 import express, { Router } from "express";
 import pino from "pino";
 import pinoLoggerMiddleware from "express-pino-logger";
-import bodyParser from "body-parser";
 import { persistenceLayer } from "sourced-repo-typeorm";
 import { registerHandlers } from "register-server-handlers";
 import { config } from "../config.js";
@@ -21,9 +20,9 @@ const appRouter = Router();
 let listeningServer;
 
 // parse application/x-www-form-urlencoded
-server.use(bodyParser.urlencoded({ extended: false }));
+server.use(express.urlencoded({ extended: false }));
 // parse application/json
-server.use(bodyParser.json());
+server.use(express.json({ limit: "50mb" }));
 
 // enable request logging
 appRouter.use(pinoLogger);
@@ -34,11 +33,11 @@ export const start = async (server, handlersPath: string) => {
     url: sourced.psql.url,
     schema: sourced.psql.schema,
     synchronize: sourced.psql.synchronize,
-    // extra: {
-    //   ssl: {
-    //     rejectUnauthorized: sourced.psql.ssl.rejectUnauthorized,
-    //   },
-    // },
+    extra: {
+      ssl: {
+        rejectUnauthorized: sourced.psql.ssl.rejectUnauthorized,
+      },
+    },
   };
   logger.info({
     msg: "⏳ connecting to psql",
@@ -95,10 +94,14 @@ const onListen = (port) => {
 
 export const shutdown = (server) => async () => {
   logger.info("🛑 Received SIGTERM, shutting down...");
-  await server.close();
-  logger.info("🛑 Server closed");
-  await persistenceLayer.disconnect();
-  logger.info("🛑 Disconnected from PSQL");
+  if (server && server.close) {
+    await server.close();
+    logger.info("🛑 Server closed");
+  }
+  if (persistenceLayer && persistenceLayer.disconnect) {
+    await persistenceLayer.disconnect();
+    logger.info("🛑 Disconnected from PSQL");
+  }
   logger.info("🛑 Exiting...");
   return process.exit(0);
 };

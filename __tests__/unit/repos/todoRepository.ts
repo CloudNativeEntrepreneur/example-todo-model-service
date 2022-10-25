@@ -1,4 +1,4 @@
-import { todoRepository } from "../../../src/repos/todoRepository";
+import { repository } from "../../../src/repos/todoRepository";
 
 jest.mock("sourced-repo-typeorm", () => {
   return {
@@ -14,12 +14,12 @@ describe("repos/todoRepository", () => {
     const mod2 = await import("../../../src/repos/todoRepository");
     const mod3 = await import("../../../src/repos/todoRepository");
 
-    const instance2 = mod2.todoRepository;
-    const instance3 = mod3.todoRepository;
+    const instance2 = mod2.repository;
+    const instance3 = mod3.repository;
 
     expect(repo.Repository).toHaveBeenCalledTimes(1);
-    expect(todoRepository).toBeDefined();
-    expect(todoRepository).toBe(instance2);
+    expect(repository).toBeDefined();
+    expect(repository).toBe(instance2);
     expect(instance2).toBe(instance3);
   });
 });

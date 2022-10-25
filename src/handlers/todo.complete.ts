@@ -1,5 +1,5 @@
 import { knativebus } from "knativebus";
-import { todoRepository } from "../repos/todoRepository.js";
+import { repository } from "../repos/todoRepository";
 import { config } from "../config.js";
 import axios from "axios";
 
@@ -33,7 +33,7 @@ export const handle = async (
   });
 
   try {
-    todoInstance = await todoRepository.get(id);
+    todoInstance = await repository.get(id);
   } catch (err) {
     const msg = `Cannot find ToDo with id ${id}`;
     request.log.info({ msg: `🚨 ${msg}: ${err}` });
@@ -78,17 +78,18 @@ export const handle = async (
   todoInstance.complete();
 
   try {
-    await todoRepository.commit(todoInstance);
-  } catch (err) {
+    await repository.commit(todoInstance);
+  } catch (err: any) {
     request.log.error({
-      msg: "🚨 Error calling todoRepository.commit",
+      msg: "🚨 Error calling repository.commit",
       err,
     });
 
-    response.status(500).json(err);
-
-    const termSignal: NodeJS.Signals = "SIGTERM";
-    process.emit(termSignal, termSignal);
+    if (sync) {
+      return response.status(500).json({ message: err.statusText });
+    } else {
+      return response.status(500).send();
+    }
   }
 };
 
