@@ -1,5 +1,5 @@
 import { knativebus } from "knativebus";
-import { repository } from "../repos/todoRepository";
+import { repository } from "../repos/todoRepository.js";
 import { config } from "../config.js";
 import axios from "axios";
 
