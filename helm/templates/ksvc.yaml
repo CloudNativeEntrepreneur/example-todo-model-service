@@ -53,8 +53,8 @@ spec:
           value: postgres://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DATABASE)
         - name: TODO_EVENTS_BROKER_URL
           value: http://broker-ingress.knative-eventing.svc.cluster.local/{{ .Release.Namespace }}/todo-events
-        - name: CNE_HASURA_DENORMALIZER_URL
-          value: http://example-hasura-denormalizer.{{ .Release.Namespace }}.svc.cluster.local
+        - name: EXAMPLE_HASURA_PROJECTIONS_URL
+          value: http://example-hasura-projections-service.{{ .Release.Namespace }}.svc.cluster.local
         - name: ENABLE_SYNC_SEND_TO_DENORMALIZER
           value: "true"
         - name: ENABLE_EVENT_PUBLISHING
