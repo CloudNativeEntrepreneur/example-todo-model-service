@@ -3,7 +3,8 @@ kind: Broker
 metadata:
   name: todo-commands
   annotations:
-      eventing.knative.dev/broker.class: MTChannelBasedBroker
+    eventing.knative.dev/broker.class: MTChannelBasedBroker
+    argocd.argoproj.io/sync-wave: "-1"
 spec:
   delivery:
     deadLetterSink:
