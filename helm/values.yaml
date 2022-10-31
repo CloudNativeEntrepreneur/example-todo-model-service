@@ -24,10 +24,10 @@ knative:
   minScale: 1
   maxScale: 1
   concurrencyTarget: 100
-  eventing:
-    local:
-    subscriber:
-    dlqSubscriber:
+
+local: false
+localKnativeSubscriber: http://host.docker.internal:5002
+localKnativeDlqSubscriber: http://host.docker.internal:3999
 
 # HorizontalPodAutoscaler
 hpa:

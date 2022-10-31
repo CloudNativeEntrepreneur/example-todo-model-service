@@ -1,4 +1,4 @@
-{{- if .Values.knative.eventing.local }}
+{{- if .Values.local }}
 {{- else }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role

@@ -8,8 +8,8 @@ metadata:
 spec:
   delivery:
     deadLetterSink:
-{{- if .Values.knative.eventing.local }}
-      uri: {{ .Values.knative.eventing.dlqSubscriber }}/cloudevent/dead-letter
+{{- if .Values.local }}
+      uri: {{ .Values.localKnativeDlqSubscriber }}/cloudevent/dead-letter
 {{- else }}
       ref:
         apiVersion: serving.knative.dev/v1

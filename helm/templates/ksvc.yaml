@@ -1,4 +1,4 @@
-{{- if .Values.knative.eventing.local }}
+{{- if .Values.local }}
 {{- else }}
 apiVersion: serving.knative.dev/v1
 kind: Service
