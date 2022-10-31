@@ -4,6 +4,7 @@ metadata:
   name: todo-events
   annotations:
       eventing.knative.dev/broker.class: MTChannelBasedBroker
+      argocd.argoproj.io/sync-wave: "-1"
 spec:
   delivery:
     deadLetterSink:

@@ -1,20 +1,17 @@
 {{- if .Values.knative.eventing.local }}
 {{- else }}
-{{- if .Values.knativeDeploy }}
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-{{- if .Values.service.name }}
   name: {{ .Values.service.name }}
-{{- else }}
-  name: {{ template "fullname" . }}
-{{- end }}
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     networking.knative.dev/visibility: cluster-local
 {{- if .Values.service.labels }}
 {{ toYaml .Values.service.labels | indent 4 }}
 {{- end }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   template:
     metadata:
@@ -78,5 +75,4 @@ spec:
           timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
-{{- end }}
 {{- end }}
