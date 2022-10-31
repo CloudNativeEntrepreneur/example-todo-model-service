@@ -71,28 +71,6 @@ To start the tests in watch mode run, which will rerun as you make code changes:
 npm run test:integration:watch
 ```
 
-#### Local development cluster integration tests
-
-To run these tests locally, first set up a [local-development-cluster](https://github.com/cloudnativeentrepreneur/local-development-cluster), and then run the following to deploy a local copy of your app that local cluster:
-
-```bash
-make refresh-kind-image
-```
-
-Or
-
-
-```bash
-make hard-refresh-kind-image
-```
-
-
-Make sure `localizer` is running (`make localizer` in the [meta repo](https://github.com/cloudnativeentrepreneur/cne-meta), then, trigger the integration tests using:
-
-```
-npm run test:integration
-```
-
 ## Linting
 
 To format the code automatically and fix any automatically fixable errors, run:

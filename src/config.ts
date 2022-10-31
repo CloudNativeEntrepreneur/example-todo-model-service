@@ -4,7 +4,7 @@ export const config = {
       todo: {
         events:
           process.env.TODO_EVENTS_BROKER_URL ||
-          "http://broker-ingress.knative-eventing.svc.cluster.local/default/todo-events",
+          "http://broker-ingress.knative-eventing.svc.cluster.local/example-local-env/todo-events",
       },
     },
     source: "example-todo-model-service",
