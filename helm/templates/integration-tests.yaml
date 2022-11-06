@@ -4,7 +4,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Values.service.name }}-itest-{{ lower .Values.image.tag }}
+  name: {{ .Values.service.name }}-itest-{{ .Values.image.tag | substr 0 11 | lower }}
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
   annotations:
