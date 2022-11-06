@@ -1,9 +1,12 @@
 {{- if .Values.local }}
 {{- else }}
+{{- if .Values.runIntegrationTests }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ .Values.service.name }}-integration-tests
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
 rules:
 - apiGroups:
   - ""
@@ -26,4 +29,5 @@ rules:
   - get
   - list
   - watch
+{{- end }}
 {{- end }}

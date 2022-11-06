@@ -1,7 +1,11 @@
 {{- if .Values.local }}
 {{- else }}
+{{- if .Values.runIntegrationTests }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ .Values.service.name }}-integration-tests
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+{{- end }}
 {{- end }}
