@@ -123,6 +123,6 @@ describe("todo model integration tests", () => {
       }
     );
 
-    expect(completeTodoResponse.status).toBe(202);
+    expect(completeTodoResponse.status).toBe(200);
   });
 });
