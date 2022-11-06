@@ -27,7 +27,7 @@
     "register-server-handlers": "4.2.3",
     "sourced": "4.0.5",
     "sourced-queued-repo-promise": "1.0.0",
-    "sourced-repo-typeorm": "3.1.7",
+    "sourced-repo-typeorm": "3.2.7",
     "uuid": "8.3.2"
   },
   "devDependencies": {
