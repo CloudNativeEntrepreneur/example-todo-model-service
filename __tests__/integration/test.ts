@@ -96,12 +96,6 @@ describe("todo model integration tests", () => {
     }
   });
 
-  // Example todo:initialize command input
-  // {
-  //   id: "todo-id-test-2",
-  //   address: "0x000000test0000000",
-  //   todo: "The only other task that matters",
-  // };
   it("should get 201 when calling todo.initialize with auth session info", async () => {
     info("sending command todo.initialize");
     const initializeTodoResponse = await send(

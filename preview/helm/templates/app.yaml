@@ -19,7 +19,8 @@ spec:
         image:
           tag: {{ .Values.tag }}
         env:
-          EXAMPLE_HASURA_PROJECTIONS_URL: http://example-hasura-projections-service.example-prod-env.svc.cluster.local
+          ENABLE_SYNC_SEND_TO_DENORMALIZER: "false"
+          ENABLE_EVENT_PUBLISHING: "false"
   destination:
     namespace: {{ .Values.repository.name }}-{{ .Values.pr }}-preview
     server: https://kubernetes.default.svc
