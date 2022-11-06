@@ -20,8 +20,7 @@ spec:
           tag: {{ .Values.tag }}
         env:
           EXAMPLE_HASURA_PROJECTIONS_URL: http://example-hasura-projections-service.example-prod-env.svc.cluster.local
-          ENABLE_EVENT_PUBLISHING: "false"
-          TODO_EVENTS_BROKER_URL: http://broker-ingress.knative-eventing.svc.cluster.local/example-prod-env/todo-events
+          TODO_EVENTS_BROKER_URL: "http://broker-ingress.knative-eventing.svc.cluster.local/example-local-env/todo-events"
   destination:
     namespace: {{ .Values.repository.name }}-{{ .Values.pr }}-preview
     server: https://kubernetes.default.svc
