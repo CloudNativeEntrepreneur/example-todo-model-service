@@ -53,3 +53,5 @@ sourced:
   psql:
     name: example-sourced-db-postgresql
     hostname: example-sourced-db-postgresql
+
+imagePullSecrets: ghcr
