@@ -17,7 +17,7 @@ image:
 # define environment variables here as a map of key: value
 env:
 
-runIntegrationTests: false
+runIntegrationTests: true
 # enable this flag to use knative serve to deploy the app
 knativeDeploy: true
 knative:
