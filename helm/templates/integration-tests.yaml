@@ -4,11 +4,11 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Values.service.name }}-integration-tests-{{ lower .Values.image.tag }}
+  name: {{ .Values.service.name }}-itest-{{ .Values.image.tag | substr 0 11 | lower }}
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/hook: PostSync
 spec:
   template:
     metadata:
@@ -17,13 +17,6 @@ spec:
     spec:
       serviceAccountName: {{ .Values.service.name }}-integration-tests
       initContainers:
-      - name: wait-for-resources
-        image: bitnami/kubectl:1.24
-        command: [
-          'sh',
-          '-c',
-          "kubectl wait --for=condition=ready pod --selector=cluster-name={{ .Values.sourced.psql.name }} --timeout=600s -n {{ .Release.Namespace }}; REVISION=`kubectl get revisions -n {{ .Release.Namespace }} | grep example-hasura-0 | tail -1 | awk '$1 {print$1}-deployment'`; kubectl rollout status -n {{ .Release.Namespace }} deployment $REVISION-deployment"
-        ]
       - name: wait-for-new-revision
         image: bitnami/kubectl:1.24
         command: ['sh', '-c', "REVISION=`kubectl get revisions -n {{ .Release.Namespace }} | tail -1 | awk '$1 {print$1}-deployment'`; kubectl rollout status -n {{ .Release.Namespace }} deployment $REVISION-deployment"]
