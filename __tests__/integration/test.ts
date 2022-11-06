@@ -96,7 +96,7 @@ describe("todo model integration tests", () => {
     }
   });
 
-  it("should get 201 when calling todo.initialize with auth session info", async () => {
+  it("should get 200 when calling todo.initialize with auth session info", async () => {
     info("sending command todo.initialize");
     const initializeTodoResponse = await send(
       "todo.initialize",
@@ -108,7 +108,7 @@ describe("todo model integration tests", () => {
       }
     );
 
-    expect(initializeTodoResponse.status).toBe(200);
+    expect(initializeTodoResponse.status).toBe(250);
     expect(initializeTodoResponse.data.id).toBeDefined();
     expect(initializeTodoResponse.data.todo).toBe("integration tests");
 
