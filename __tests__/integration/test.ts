@@ -108,7 +108,7 @@ describe("todo model integration tests", () => {
       }
     );
 
-    expect(initializeTodoResponse.status).toBe(201);
+    expect(initializeTodoResponse.status).toBe(202);
     expect(initializeTodoResponse.data.id).toBeDefined();
     expect(initializeTodoResponse.data.todo).toBe("integration tests");
 
@@ -123,6 +123,6 @@ describe("todo model integration tests", () => {
       }
     );
 
-    expect(completeTodoResponse.status).toBe(201);
+    expect(completeTodoResponse.status).toBe(202);
   });
 });
