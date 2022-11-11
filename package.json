@@ -23,7 +23,7 @@
     "express": "4.18.2",
     "express-pino-logger": "7.0.0",
     "knativebus": "2.3.17",
-    "pino": "7.11.0",
+    "pino": "8.7.0",
     "register-server-handlers": "4.2.4",
     "sourced": "4.0.6",
     "sourced-queued-repo-promise": "1.1.0",
