@@ -28,7 +28,7 @@
     "sourced": "4.0.6",
     "sourced-queued-repo-promise": "1.1.0",
     "sourced-repo-typeorm": "3.2.7",
-    "uuid": "8.3.2"
+    "uuid": "9.0.0"
   },
   "devDependencies": {
     "@jest/globals": "27.5.1",
