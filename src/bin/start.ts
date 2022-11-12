@@ -1,33 +1,15 @@
 import path from "path";
-import express, { Router } from "express";
 import pino from "pino";
-import pinoLoggerMiddleware from "express-pino-logger";
 import { persistenceLayer } from "sourced-repo-typeorm";
-import { registerHandlers } from "register-server-handlers";
 import { config } from "../config.js";
-import { healthcheck } from "../lib/healthcheck.js";
+import { microservice } from "knative-microservice";
 
 const { port, sourced, handlerBasePath } = config;
 const handlersPath = path.resolve(process.cwd(), handlerBasePath, "handlers");
 
-const logger = pino();
-const pinoLogger = pinoLoggerMiddleware({ logger });
-const server = express();
+export const start = async () => {
+  const logger = pino();
 
-const healthRouter = Router();
-const appRouter = Router();
-
-let listeningServer;
-
-// parse application/x-www-form-urlencoded
-server.use(express.urlencoded({ extended: false }));
-// parse application/json
-server.use(express.json({ limit: "50mb" }));
-
-// enable request logging
-appRouter.use(pinoLogger);
-
-export const start = async (server, handlersPath: string) => {
   const connectionOptions = {
     type: "postgres" as const,
     url: sourced.psql.url,
@@ -39,6 +21,7 @@ export const start = async (server, handlersPath: string) => {
       },
     },
   };
+
   logger.info({
     msg: "⏳ connecting to psql",
     sync: connectionOptions.synchronize,
@@ -52,60 +35,20 @@ export const start = async (server, handlersPath: string) => {
   }
   logger.info("✅ connected to psql");
 
-  healthRouter.get("/", healthcheck);
-  server.use("/health", healthRouter);
-
-  logger.info(`⏳ registering server handlers from ${handlersPath}`);
-  // register handlers as HTTP Post handlers
-  await registerHandlers({
-    server: appRouter,
-    path: handlersPath,
-    handlerOptions: {
-      sync: config.enableSyncSendToDenormalizer,
-      enableEventPublishing: config.enableEventPublishing,
+  const { server, shutdown, onListen } = await microservice({
+    handlers: {
+      path: handlersPath,
+      options: {
+        enableSyncSendToDenormalizer: config.enableSyncSendToDenormalizer,
+        enableEventPublishing: config.enableEventPublishing,
+      },
     },
+    logger,
   });
 
-  logger.info(
-    `⏳ registering server cloud event handlers from ${handlersPath}`
-  );
-  // register handlers as KNative Cloud Event Handlers
-  await registerHandlers({
-    server: appRouter,
-    path: handlersPath,
-    cloudevents: true,
-    serverPath: "/cloudevent/",
-    handlerOptions: {
-      sync: false,
-      enableEventPublishing: config.enableEventPublishing,
-    },
-  });
+  server.listen(port, onListen(port));
 
-  server.use("/", appRouter);
-
-  logger.info(`✅ handlers registered`);
-
-  listeningServer = server.listen(port, onListen(port));
+  process.on("SIGTERM", shutdown(persistenceLayer));
 };
 
-const onListen = (port) => {
-  logger.info(`🚀 Server listening on port ${port}`);
-};
-
-export const shutdown = (server) => async () => {
-  logger.info("🛑 Received SIGTERM, shutting down...");
-  if (server && server.close) {
-    await server.close();
-    logger.info("🛑 Server closed");
-  }
-  if (persistenceLayer && persistenceLayer.disconnect) {
-    await persistenceLayer.disconnect();
-    logger.info("🛑 Disconnected from PSQL");
-  }
-  logger.info("🛑 Exiting...");
-  return process.exit(0);
-};
-
-process.on("SIGTERM", shutdown(listeningServer));
-
-start(server, handlersPath);
+await start();
