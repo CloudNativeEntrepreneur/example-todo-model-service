@@ -10,7 +10,7 @@ podsLabels: {}
 deploymentLabels: {}
 image:
   repository: ghcr.io/cloudnativeentrepreneur/example-todo-model-service
-  tag: latest
+  tag: v0.14.1
   pullPolicy: IfNotPresent
 # define environment variables here as a map of key: value
 env:
@@ -53,5 +53,4 @@ sourced:
   psql:
     name: example-sourced-db-postgresql
     hostname: example-sourced-db-postgresql
-
 imagePullSecrets: ghcr
