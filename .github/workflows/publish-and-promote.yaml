@@ -18,7 +18,7 @@ jobs:
     with:
       environment_repository: CloudNativeEntrepreneur/example-local-env
       project: example-local-env
-      pull_request: true
+      pull_request: false
       values: |
         # Set from promote job of CloudNativeEntrepreneur/example-todo-model-service
         local: true
@@ -29,4 +29,4 @@ jobs:
     with:
       environment_repository: CloudNativeEntrepreneur/example-prod-env
       project: example-prod-env
-      pull_request: true
+      pull_request: false
