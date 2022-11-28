@@ -1,6 +1,5 @@
 name: example-todo-model-service
-pr: pr-0
-headRef: HEAD
-tag: latest
-repository: CloudNativeEntrepreneur/example-todo-model-service
+version: HEAD
 project: dev
+repository: CloudNativeEntrepreneur/example-todo-model-service
+values: ""
