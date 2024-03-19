@@ -1,4 +1,4 @@
-FROM node:18.12.1-alpine3.16 as build
+FROM node:18.16.0-alpine3.16 as build
 
 WORKDIR /build
 
@@ -12,7 +12,7 @@ COPY tsconfig.json ./
 RUN npm run build
 RUN npm prune --production
 
-FROM node:18.12.1-alpine3.16
+FROM node:18.16.0-alpine3.16
 
 WORKDIR /usr/src/app
 
