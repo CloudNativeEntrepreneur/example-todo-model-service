@@ -23,7 +23,7 @@
     "knative-microservice": "1.0.3",
     "knativebus": "2.3.17",
     "pino": "8.7.0",
-    "sourced": "4.0.6",
+    "sourced": "4.0.7",
     "sourced-queued-repo-promise": "1.1.0",
     "sourced-repo-typeorm": "3.2.7",
     "uuid": "9.0.0"
